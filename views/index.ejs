@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <textarea id="type" cols="30" rows="10">
+</textarea>
+    <div id="text"></div>
+</body>
+
+</html>
+
+<script>
+    let passage = "<%= JSON.stringify(text) %>".replace("\n", "\n").split(" ");
+
+    type.focus();
+    text = document.querySelector("#text");
+    type = document.querySelector("#type");
+
+    for (i = 0; i < passage.length; i++) {
+        el = document.createElement('span')
+        word = document.createElement('span')
+        word.innerHTML = passage[i];
+        el.appendChild(word)
+        text.appendChild(el)
+    }
+
+    type.addEventListener("input", () => {
+        typed = type.value.split(" ");
+        text.innerHTML = ""
+        for (i = 0; i < passage.length; i++) {
+            el = document.createElement('span')
+            word = document.createElement('span')
+            word.innerHTML = passage[i];
+            el.appendChild(word)
+            if (typed[i]) {
+                word = document.createElement('span')
+                console.log(typed[i])
+                word.innerHTML = typed[i];
+                if (passage[i] != typed[i]) {
+                    word.classList.add("incorrect")
+                }
+                el.appendChild(word)
+            }
+            text.appendChild(el)
+        }
+    })
+
+</script>
+
+<style>
+    span {
+        display: inline-flex;
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    div {
+        flex-wrap: wrap;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .incorrect {
+        color: red;
+    }
+</style>
