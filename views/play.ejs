@@ -20,18 +20,21 @@
             <div class="card text-holder m-5">
                 <div id="text"></div>
             </div>
+            <h5>Speed:<span id="time">time</span></h5>
         </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/he/1.2.0/he.min.js"></script>
     <script>
+        let start = 0
+        let timeSpan = document.querySelector("#time")
 
         let passage = <%- he.decode(JSON.stringify(text).trim()) %>;
         var s = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 
+        let wrong = 0
 
-
-        text = document.querySelector("#text");
-        type = ""
+        let text = document.querySelector("#text");
+        let type = ""
 
         passage = passage.replaceAll("“", "\"")
             .replaceAll("”", "\"")
@@ -95,16 +98,17 @@
         })
 
         update = () => {
+            if(!start && type) start = Date.now()
             typed = type.split(" ")
             text.innerHTML = ""
             let container = document.createElement("div")
+            wrong  = 0;
             for (i = 0; i < passage.length; i++) {
                 el = document.createElement('span')
-
+                
                 word = document.createElement("span")
                 word.innerText = passage[i].replaceAll("\n", "")
                 el.appendChild(word)
-
                 if (typed[i]) {
                     word = document.createElement("span")
                     word.classList.add("typed")
@@ -112,14 +116,21 @@
                     el.appendChild(word)
                     if (typed[i + 1] != undefined && (typed[i] != passage[i].replace('\n', ""))) {
                         word.classList.add("incorrect")
+                        wrong += 1
                     }
                 }
                 container.appendChild(el)
-
+                
+                
                 if (!passage[i + 1] || passage[i + 1].includes('\n')) {
                     text.appendChild(container)
                     container = document.createElement("div")
                 }
+
+            }
+            timeSpan.innerHTML = Math.ceil(((typed.length / ((Date.now() - start) / 60000)) * (Math.ceil(10 * (1 - wrong/typed.length)))/ 10));
+            if(typed.length > passage.length || typed[passage.length -1] == passage[passage.length -1]){
+                console.log("done")
             }
         }
 
